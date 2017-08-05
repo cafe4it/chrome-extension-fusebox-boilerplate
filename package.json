@@ -1,0 +1,14 @@
+{
+  "name": "chrome-extension-fusebox-boilerplate",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "cafe4it@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "fuse-box": "^2.2.1"
+  }
+}
