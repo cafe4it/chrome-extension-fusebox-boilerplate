@@ -2,6 +2,6 @@ module.exports = { contents: "\"use strict\";\n\nexports.__esModule = true;\nvar
 dependencies: ["../shared/welcome.js"],
 sourceMap: "{\"version\":3,\"file\":\"popup/index.js\",\"sourceRoot\":\"\",\"sources\":[\"/src/popup/index.ts\"],\"names\":[],\"mappings\":\";;AAAA,mDAA2C;AAE3C,uBAAO,CAAC,gBAAgB,CAAC,CAAC\",\"sourcesContent\":[\"import welcome from '../shared/welcome.js';\\n\\nwelcome('popup/index.js');\\n\"]}",
 headerContent: undefined,
-mtime: 1502099150336,
+mtime: 1502114570109,
 devLibsRequired : undefined
 };

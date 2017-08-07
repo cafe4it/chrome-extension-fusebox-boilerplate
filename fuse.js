@@ -1,17 +1,17 @@
 const { FuseBox, CSSPlugin, WebIndexPlugin, QuantumPlugin, Sparky, BabelPlugin } = require("fuse-box");
 
-let fuse, app, vendor, isProduction = false;
+let fuse, isProduction = false;
 
-Sparky.task("config", () => {
+
+
+Sparky.task("build", () => {
 	fuse = FuseBox.init({
 		homeDir: "src",
-		output: "dist/$name.js",
-		experimentalFeatures: true,
-		hash: isProduction,
+		output: isProduction ? "dist/$name.js" : "build/$name.js",
 		sourceMaps: !isProduction,
 		plugins: [
 			CSSPlugin(),
-			WebIndexPlugin(),
+            WebIndexPlugin(),
 			BabelPlugin({
 				presets: ["es2015"]
 			}),
@@ -21,34 +21,54 @@ Sparky.task("config", () => {
 		]
 	});
 
-	// out main bundle
-	app = fuse.bundle("app")
-		.split("background/**", "index > background/index.ts")
-		.split("content/**", "index > content/index.ts")
-		.instructions("> [**/**.ts]")
+	fuse.bundle('content/index')
+		.watch('content/**')
+		.hmr()
+		.instructions(' > content/index.ts');
+
+	fuse.bundle('background/index')
+		.watch('background/**')
+		.hmr()
+		.instructions(' > background/index.ts');
+
+    fuse.bundle('popup/index')
+        .watch('popup/**')
+        .hmr()
+        .instructions(' > popup/index.ts')
+
+    fuse.bundle('newtab/index')
+        .watch('newtab/**')
+        .hmr()
+        .instructions(' > newtab/index.ts');
+
+    fuse.bundle('options/index')
+        .watch('options/**')
+        .hmr()
+        .instructions(' > options/index.ts');
 
 	if (!isProduction) {
 		fuse.dev();
 	}
+
+	fuse.run();
 });
 
-// development task "node fuse""
-Sparky.task("default", ["config"], () => {
-	app.watch();
-	return fuse.run();
+Sparky.task('default', ['clean-build', 'build'],() => {
+	console.log('build successfully!')
 });
 
-// Dist task "node fuse dist"
-Sparky.task("dist", ["set-production", "config"], () => {
-	fuse.dev();
-	return fuse.run();
-});
-
-Sparky.task("set-production", () => {
+Sparky.task('set-production-env', () => {
 	isProduction = true;
-	return Sparky.src("dist/").clean("dist/");
 });
 
-Sparky.task("test", ["config"], () => {
-	return app.test();
+Sparky.task('clean-build', () => {
+	return Sparky.src('build/*').clean('build/');
+});
+
+Sparky.task('clean-dist', () => {
+    return Sparky.src('dist/*').clean('dist/');
+});
+
+Sparky.task('dist', ['clean-dist', 'set-production-env', 'build'], () => {
+	console.log('product successfully!')
 });
