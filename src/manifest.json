@@ -1,6 +1,9 @@
 {
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDescription__",
+  "version": "0.0.1",
   "manifest_version": 2,
-  "homepage_url": "http://extensions.space",
+  "homepage_url": "https://github.com",
   "default_locale": "en",
   "content_scripts": [
     {
@@ -22,7 +25,10 @@
   },
   "page_action": {
     "default_title": "__MSG_extName__",
-    "default_popup": "popup/index.html"
+    "default_popup": "popup/index.html",
+    "default_icon": {
+      "38": "icons/icon-38.png"
+    }
   },
   "chrome_url_overrides": {
     "newtab": "newtab/index.html"
@@ -39,8 +45,9 @@
     "shared/google-analytics-bundle.js"
   ],
   "icons": {
-    "16": "icons/webpack-16.png",
-    "32": "icons/webpack-32.png",
-    "128": "icons/webpack-128.png"
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "38": "icons/icon-38.png",
+    "128": "icons/icon-128.png"
   }
 }
