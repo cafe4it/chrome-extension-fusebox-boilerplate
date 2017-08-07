@@ -72,3 +72,4 @@ Sparky.task('clean-dist', () => {
 Sparky.task('dist', ['clean-dist', 'set-production-env', 'build'], () => {
 	console.log('product successfully!')
 });
+
