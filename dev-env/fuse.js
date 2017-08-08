@@ -1,22 +1,24 @@
-const { FuseBox, CSSPlugin, WebIndexPlugin, QuantumPlugin, Sparky, BabelPlugin } = require("fuse-box");
+const { FuseBox, CSSPlugin, Sparky, BabelPlugin, UglifyESPlugin } = require("fuse-box");
+const paths = require('./paths');
+const MakeHTMLPlugin = require("./MakeHTMLPlugin");
 
 let fuse, isProduction = false;
 
 
 
 Sparky.task("build", () => {
+	isProduction = process.env.NODE_ENV !== 'development';
 	fuse = FuseBox.init({
-		homeDir: "src",
-		output: isProduction ? "dist/$name.js" : "build/$name.js",
+		homeDir: "../src",
+		output: `${paths.build}/$name.js`,
 		sourceMaps: !isProduction,
 		plugins: [
 			CSSPlugin(),
-            WebIndexPlugin(),
 			BabelPlugin({
 				presets: ["es2015"]
 			}),
-			isProduction && QuantumPlugin({
-				uglify: true
+			isProduction && UglifyESPlugin({
+				compress: true
 			}),
 		]
 	});
@@ -33,16 +35,25 @@ Sparky.task("build", () => {
 
     fuse.bundle('popup/index')
         .watch('popup/**')
+	    .plugin(MakeHTMLPlugin({
+		    bundle: 'popup/index'
+	    }))
         .hmr()
         .instructions(' > popup/index.ts')
 
     fuse.bundle('newtab/index')
         .watch('newtab/**')
+	    .plugin(MakeHTMLPlugin({
+		    bundle: 'newtab/index'
+	    }))
         .hmr()
         .instructions(' > newtab/index.ts');
 
     fuse.bundle('options/index')
         .watch('options/**')
+	    .plugin(MakeHTMLPlugin({
+		    bundle: 'options/index'
+	    }))
         .hmr()
         .instructions(' > options/index.ts');
 
@@ -54,22 +65,10 @@ Sparky.task("build", () => {
 });
 
 Sparky.task('default', ['clean-build', 'build'],() => {
-	console.log('build successfully!')
+	console.log('begin building...');
 });
 
-Sparky.task('set-production-env', () => {
-	isProduction = true;
-});
-
-Sparky.task('clean-build', () => {
-	return Sparky.src('build/*').clean('build/');
-});
-
-Sparky.task('clean-dist', () => {
-    return Sparky.src('dist/*').clean('dist/');
-});
-
-Sparky.task('dist', ['clean-dist', 'set-production-env', 'build'], () => {
-	console.log('product successfully!')
+Sparky.task('clean', () => {
+	return Sparky.src(`${paths.build}/*`).clean(`${paths.build}/`);
 });
 
