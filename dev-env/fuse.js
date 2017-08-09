@@ -1,5 +1,6 @@
 const { FuseBox, CSSPlugin, Sparky, BabelPlugin, UglifyESPlugin } = require("fuse-box");
 const paths = require('./paths');
+const Manifest = require('./manifest/index');
 const MakeHTMLPlugin = require("./MakeHTMLPlugin");
 
 let fuse, isProduction = false;
@@ -8,6 +9,8 @@ let fuse, isProduction = false;
 
 Sparky.task("build", () => {
 	isProduction = process.env.NODE_ENV !== 'development';
+	const manifest = Manifest({manifest: paths.manifest, build: paths.build});
+	manifest.processManifest()
 	fuse = FuseBox.init({
 		homeDir: "../src",
 		output: `${paths.build}/$name.js`,
@@ -20,7 +23,8 @@ Sparky.task("build", () => {
 			isProduction && UglifyESPlugin({
 				compress: true
 			}),
-		]
+		],
+		writeBundles : false
 	});
 
 	fuse.bundle('content/index')
@@ -61,7 +65,11 @@ Sparky.task("build", () => {
 		fuse.dev();
 	}
 
-	fuse.run();
+	fuse.run().then(producer => {
+		// producer.bundles.forEach(bundle => {
+		// 	console.log(bundle.context.output.lastPrimaryOutput);
+		// });
+	})
 });
 
 Sparky.task('default', ['clean-build', 'build'],() => {
